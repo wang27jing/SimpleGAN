@@ -1,7 +1,7 @@
 __author__ = "Jing Wang"
 
-from datetime import datetime
 import tensorflow as tf
+from datetime import datetime
 from tensorflow.examples.tutorials.mnist import input_data
 import os
 from util import *
@@ -26,10 +26,14 @@ summary_writer = tf.summary.FileWriter('./log/train/' + datetime.now().strftime(
 
 
 for i in range(1, 1000000):
+    # Load a batch of images
     X_batch, _ = mnist.train.next_batch(batch_size)
+
+    # Alternately train discriminator and generator
     sess.run(D_solver, feed_dict={X: X_batch, Z: sample_z(batch_size, z_dim)})
     sess.run(G_solver, feed_dict={Z: sample_z(batch_size, z_dim)})
 
+    # To get sample images every 1000 steps
     if i % 1000 == 0:
         if tensorboard:
             loss_summary = sess.run(loss_merged_summary, feed_dict={X: X_batch, Z: sample_z(batch_size, z_dim)})
